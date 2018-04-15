@@ -1,0 +1,211 @@
+<style lang="less">
+  .container{
+    padding-top: 500rpx;
+  }
+</style>
+<template>
+  <view class="container">
+    <picker range="{{array}}" mode="multiSelector" value="{{defaultDate}}" bindcolumnchange="val" dataStart="select">{{dataStart}}</picker>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+  import { connect } from 'wepy-redux'
+  import testMixin from '../mixins/test'
+
+  @connect({
+  })
+
+  export default class Index extends wepy.page {
+    config = {
+      navigationBarTitleText: '时间选择',
+      navigationStyle: false
+    };
+    components = {
+    };
+
+    mixins = [testMixin];
+
+    data = {
+      start: 2018,//年份列表的第一个值
+      yearF: 0,//辅助值，默认必须为0
+      monthF: 0,//辅助值，默认必须为0
+      array:[],
+      defaultDate: [0,0,0,0,0],//默认日期
+      dataStart: '1',
+    };
+
+    computed = {
+    };
+
+    methods = {
+      //滚动触发
+      val(e){//主要作用是调整 日列表 的数据，根据月列表的变化而更改日列表的数据
+        var site=e.detail;
+        // console.log('抖动：',e,site);
+        if (site.column<=1){
+          var R = false;
+          if(this.yearF==0 && this.monthF==0){
+            this.yearF = this.start;
+            this.monthF = new Date().getMonth()+1;
+          }
+          if(site.column==0){//滚动年份列表
+            this.yearF = this.start + site.value;//获取到当前年份
+            console.log(this.yearF);
+            if ((this.yearF % 4 == 0 && this.yearF % 100 != 0) || (this.yearF % 400 == 0)){
+              R = true;
+              console.log('闰年')
+            }else {
+              R = false;
+              console.log('非润年')
+            }
+            switch (this.monthF-1){
+              case 0://一月份
+                this.array[2] = this.date(31, 1, '日');
+                break;
+              case 1://二月份
+                if (R) {
+                  this.array[2] = this.date(29, 1, '日');
+                } else {
+                  this.array[2] = this.date(28, 1, '日');
+                }
+                break;
+              case 2://三月份
+                this.array[2] = this.date(31, 1, '日');
+                break;
+              case 3://四月份
+                this.array[2] = this.date(30, 1, '日');
+                break;
+              case 4://五月份
+                this.array[2] = this.date(31, 1, '日');
+                break;
+              case 5://六月份
+                this.array[2] = this.date(30, 1, '日');
+                break;
+              case 6://七月份
+                this.array[2] = this.date(31, 1, '日');
+                break;
+              case 7://八月份
+                this.array[2] = this.date(31, 1, '日');
+                break;
+              case 8://九月份
+                this.array[2] = this.date(30, 1, '日');
+                break;
+              case 9://十月份
+                this.array[2] = this.date(31, 1, '日');
+                break;
+              case 10://十一月份
+                this.array[2] = this.date(30, 1, '日');
+                break;
+              case 11://十二月份
+                this.array[2] = this.date(31, 1, '日');
+                break;
+            }
+          }else{//滚动月份列表
+            if ((this.yearF % 4 == 0 && this.yearF % 100 != 0) || (this.yearF % 400 == 0)){
+              R = true;
+              console.log('闰年')
+            }else {
+              R = false;
+              console.log('非润年')
+            }
+            this.monthF=site.value+1;
+            console.log(this.yearF);
+             switch (site.value){
+               case 0://一月份
+                 this.array[2] = this.date(31, 1, '日');
+                 break;
+               case 1://二月份
+                 if (R) {
+                   this.array[2] = this.date(29, 1, '日');
+                 } else {
+                   this.array[2] = this.date(28, 1, '日');
+                 }
+                 break;
+               case 2://三月份
+                 this.array[2] = this.date(31, 1, '日');
+                 break;
+               case 3://四月份
+                 this.array[2] = this.date(30, 1, '日');
+                 break;
+               case 4://五月份
+                 this.array[2] = this.date(31, 1, '日');
+                 break;
+               case 5://六月份
+                 this.array[2] = this.date(30, 1, '日');
+                 break;
+               case 6://七月份
+                 this.array[2] = this.date(31, 1, '日');
+                 break;
+               case 7://八月份
+                 this.array[2] = this.date(31, 1, '日');
+                 break;
+               case 8://九月份
+                 this.array[2] = this.date(30, 1, '日');
+                 break;
+               case 9://十月份
+                 this.array[2] = this.date(31, 1, '日');
+                 break;
+               case 10://十一月份
+                 this.array[2] = this.date(30, 1, '日');
+                 break;
+               case 11://十二月份
+                 this.array[2] = this.date(31, 1, '日');
+                 break;
+             }
+          }
+          console.log('年：'+this.yearF+'月：'+this.monthF);
+        }
+      },
+      // 选择后
+      select(e){
+        console.log(e)
+      }
+    };
+
+    events = {
+    };
+    date(a,b,c){//辅助 arrayInit() 完成工作
+      var list=[];
+      for (var i = 0; i < a; i++) {
+        if(c=='time'){
+          if(i<10){
+            list.push('0'+i)
+          }else {
+            list.push(i);
+          }
+        }else {
+          list.push(b+i+c)
+        }
+      }
+      return list
+    }
+    default(){//获取当前时间 付给容器的初始位置
+      var myDate = new Date();
+      var y = myDate.getFullYear();
+      var m = myDate.getMonth();
+      var d = myDate.getDate();
+      var h = myDate.getHours();
+      var M = myDate.getMinutes();
+      this.defaultDate=[0,m,27,h,M];//添值至容器
+      this.dataStart=(y+'年')+(m+1+'月')+(d+'日')+(h+':'+M)
+    }
+    arrayInit(){//给容器添加数据
+      var date = new Date();
+      var curMonthDays = new Date(date.getFullYear(), (date.getMonth()+1), 0).getDate();//获取当前月份的天数
+      //参数：数量、初始值、后缀/状态
+      this.array.push(this.date(5,this.start,'年'));//年份 数据
+      this.array.push(this.date(12,1,'月'));//月份 数据
+      this.array.push(this.date(curMonthDays,1,'日'));//日 数据
+      this.array.push(this.date(24,0,'time'));//时 数据
+      this.array.push(this.date(60,0,'time'));//分 数据
+      // console.log(this.array);
+      // console.log('现在是'+(date.getMonth()+1)+'月份,共'+curMonthDays+'天');
+    }
+    onLoad() {
+      this.default();
+      this.arrayInit();
+    }
+  }
+</script>
